@@ -1,0 +1,43 @@
+
+(2014-08-27)
+???????????:
+
+(2014-08-25)
+???????????:
+	* Create BUILD-INSTALL file.
+	* Change 'clean' text in Makefile option.
+	* Comented code on com/help/help.asm for avoid errors on 
+	  incl/com/help.inc. The HELP program is not programmed yet. :(
+	* Now, all directories/files created wit 'make' will store on
+	  'out' directory, instead of /tmp. More easy for cross-platform.
+
+(2014-08-24)
+???????????:
+	* Created the how-to *ASSEMBLY* file which is a full-resumed-resource
+	  about assembly language for 16, 32 and 64 bits.
+	* Fixing small bugs in *Makefile* and *requish.bash* files.
+	* Create tree directory for OS commands. 
+	  · Each command have his directory, with his source file and his 
+	    Makefile.
+	  · Each command his a binary file that MUST store on OS directory
+	    structure (root-directory). But, I don't know how achieve this now
+	    (I need programming the file-system first)
+
+(2014-08-23)
+0.0.2pre-alpha:
+	* User input fixed up 64 characteres.
+	* Small command parsing (up 4 commands, but only 2 works)
+	* Reboot and shutdown may be a VERY difficult achieve by lack of
+	  APM support on new BIOS. But I will study this :)
+	  The only way to reboot (if you tested on Live CD) is press:
+	  CTRL-ALT-DEL (CTRL-ALT-SUPR in Spanish keyboard)
+
+(2014-08-22) 
+0.0.1pre-alpha:
+	* Boot from CD/DVD without problems
+
+	BUGS:
+	* User input broke at byte 33 (the max. input is 64 bytes)
+	* No command parsing
+	* So, ANY command doesn't works :(
+	

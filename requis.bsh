@@ -1,0 +1,126 @@
+
+#! /bin/bash
+
+# requis.bsh
+# dark_neo
+# 2014-08-22
+
+################################################
+# Bash script to create the root ISO directory #
+################################################
+
+# variables
+make_objdir=$1
+iso_root=$make_objdir/iso-root
+iso_linux=$iso_root/isolinux
+isolinux_cfgfile=isolinux.cfg           # ISOLINUX configuration file
+syslinux_dir=/usr/local/src/syslinux-6.02
+kernel_imgname=$2			# Store kernel image name
+kernel_imgversion=$3                    # Store kernel version
+kernel_imgpath=$4                       # Store kernel image path
+iso_name=dn-os
+cur_date=`date +%Y%m%d`                 # yearmonthday
+cur_user="`whoami`"                     # current user logged in shell
+
+
+
+# This script only can be executed by root user
+if [ $cur_user != "root" ]; then
+	echo
+	echo Only 'root' user can execute this script. FINISH..
+	exit 1
+fi
+
+#apt-get -y -f install git genisoimage
+
+#if [ $? -ne 0 ]; then
+#	yum install -y -f git genisoimage
+#fi
+
+if [ ! -d $syslinux_dir ]; then                 # if not exists
+	echo Downloading syslinux...
+    	#git clone git://git.zytor.com/syslinux/syslinux.git $syslinux_dir
+
+	wget -c http://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.02.tar.gz -O /usr/local/src/syslinux-6.02.tgz
+	tar -xzvf /usr/local/src/syslinux-6.02.tgz -C /usr/local/src/
+
+    	# build syslinux
+    	#make -C $syslinux_dir
+	#if [ $? -neq 0 ]; then
+	#	exit 1
+	#fi
+
+    	#make -C $syslinux_dir installer
+	#if [ $? -ne 0 ]; then
+	#	exit 2
+	#fi
+
+    	#make -C $syslinux_dir install
+	#if [ $? -ne 0 ]; then
+	#	exit 3
+	#else
+	#	echo Syslinux installation OK!
+	#fi
+fi
+
+echo
+echo
+echo Creating 'iso-root' directory:
+mkdir -p $iso_root $iso_linux
+if [ $? -ne 0 ]; then
+	exit 4
+fi
+
+
+# Copying files...
+echo
+echo Copying neccesary files...
+cp -v $syslinux_dir/bios/core/isolinux.bin $iso_linux
+if [ $? -ne 0 ]; then
+	exit 5
+fi
+
+cp -v $syslinux_dir/bios/com32/elflink/ldlinux/ldlinux.c32 $iso_linux
+if [ $? -ne 0 ]; then
+	exit 6
+fi
+
+cp -v $syslinux_dir/bios/memdisk/memdisk $iso_linux
+if [ $? -ne 0 ]; then
+	exit 7
+fi
+
+echo
+echo Copying kernel image:
+cp -v $kernel_imgpath $iso_root
+if [ $? -ne 0 ]; then
+	exit 8
+fi
+
+echo
+echo Creating 'isolinux' configuration file...
+touch $iso_linux/$isolinux_cfgfile
+echo display boot.txt > $iso_linux/$isolinux_cfgfile
+echo timeout 300 >> $iso_linux/$isolinux_cfgfile
+echo default 1 >> $iso_linux/$isolinux_cfgfile
+echo label 1 >> $iso_linux/$isolinux_cfgfile
+echo kernel memdisk >> $iso_linux/$isolinux_cfgfile
+echo append initrd=/$kernel_imgname >> $iso_linux/$isolinux_cfgfile
+echo Done!
+
+echo
+echo "Creating ISO file on '"$make_objdir"' directory:"
+mkisofs -b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -o $make_objdir/$iso_name-$kernel_imgversion-$cur_date-cddvd.iso $iso_root
+if [ $? -ne 0 ]; then
+	exit 9
+fi
+
+echo Done!
+
+echo
+echo "ISO created on '"$make_objdir"' directory."
+echo
+echo "Have a nice day! :)"
+echo
+exit 0
+

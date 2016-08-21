@@ -1,0 +1,338 @@
+
+ASSEMBLY REGISTERS
+==================
+
+NOTE: ASSEMBLY LANGUAGE IS NOT CASE-SENSITIVED.
+
+DATA REGISTERS
+==============
+
+8-bit		16-bit		32-bit		64-bit
+------------------------------------------------------
+AL,AH		AX		EAX		RAX
+BL,BH		BX		EBX		RBX
+CL,CH		CX		ECX		RCX
+DL,CH		DX		EDX		RDX
+
+AX	Primary acumulator. Used in I/O and most arithmetic instructions.
+
+BX	Base register. Used for indexed addressing.
+
+CX	Count register. Store loop count in iterative operations.
+
+DX	Data register. Used in I/O operations. Used with AX register for
+	multiply and divide operations involving large values.
+
+
+POINTER REGISTERS
+=================
+
+8-bit		16-bit		32-bit		64-bit
+-------------------------------------------------------
+		IP		EIP		RIP
+		SP		ESP		RSP
+		BP		EBP		RBP
+
+IP	Instruction Pointer. Stores the offset address of the next instruction 
+	to be executed. In association with the CS registers (CS:IP) gives the
+	complete address of the current instruction in the code segment.
+
+SP	Stack Pointer. Stores the offset value within the program stack. SP in
+	association with the SS register (SS:SP) refers to be current position
+	of data or address within the program stack.
+
+BP	Base Pointer. Mainly helps in referencing the parameter variables 
+	passed to a subrutine. The address in SS register is combined with the 
+	offset to get the location of the parameter. BP can also be combined
+	with DI and SI as base register for special addressing.
+
+
+INDEX REGISTERS
+===============
+
+8-bit		16-bit		32-bit		64-bit
+------------------------------------------------------
+		SI		ESI		RSI
+		DI		EDI		RDI
+
+SI	Source Index. It is used as source index for string operations.
+DI	Destination Index. It is used as destination index for string
+	operations.
+
+
+CONTROL REGISTERS
+=================
+
+32-bit
+------
+OF	Overflow Flag. Indicates the overflow of a high-order bit (leftmost 
+	bit) of data after a signed arithmetic operation.
+
+DF	Direction Flag. Determines left or right direction for moving or
+	comparing string data. When the DF value is 0, the string operation
+	takes left-to-right direction and when the value is set to 1, the
+	string operation takes right-to-left direction.
+
+IF	Interrupt Flag. Determines whether the external interrupts like
+	keyboard enter, etc. are ignored or processed. It disables the external
+	interrupt when the value is 0 and enables interrupts when set to 1.
+
+TF	Trap Flag. Allows setting the operation of the processor in 
+	single-step.
+
+SF	Sign Flag. Shows the sign of the result of an arithmetic operation.
+	This flag is set according to the sign of a data item following the
+	arithmetic operation. The sign is indicated by the high-order of the
+	leftmost bit. A positive result clears the value of SF to 0 and 
+	negative result sets it to 1.
+
+ZF	Zero Flag. Indicates the result of an arithmetic or comparison 
+	operation. A non-zero result clears the zero flag to 0, and a zero
+	result sets it to 1.
+
+AF	Auxiliary Carry Flag. Contains the carry from bit 3 to bit 4 following
+	an arithmetic operation; used for specialized arithmetic. The AF is set
+	when a 1-byte arithmetic operation causes a carry from bit 3 into 
+	bit 4.
+
+PF	Parity Flag. Indicates the total number of 1-bits in the result 
+	obtained from an arithmetic operation. An even number of 1-bits clears
+	the parity flag to 0 and an odd number of 1-bits set the parity flag 
+	to 1.
+
+CF	Carry Flag. Contains the carry of 0 or 1 from a high-order bit
+	(leftmost) after an arithmetic operation. It also stores the contents
+	of last bit of a *shift* or *rotate* operation.
+
+
+SEGMENT REGISTERS
+=================
+
+CS	Code Segment. Contains all the instructions to be executed. A 16-bit
+	Code Segment register or CS register stores the starting address of
+	the code segment.
+
+DS	Data Segment. Contains data, constants and work areas. A 16-bit Data
+	Segment register or DS register stores the starting address of the data
+	segment.
+
+SS	Stack Segment. Contains data and return addresses of procedures or
+	subroutines. It is implemented as a 'stack' data structure. The Stack
+	Segment register or SS register stores the starting address of the 
+	stack.
+
+ES	Extra Segment.
+
+
+INSTRUCTIONS
+============
+
+MOV	Used for moving data from one storage space to another. Takes two
+	operands. Both operands should be of same size and the value of source
+	operand remains unchanged.
+
+	MOV	destination,	source
+
+	Type Specifier		Bytes addressed
+	---------------------------------------
+	BYTE				1
+	WORD				2
+	DWORD				4
+	QWORD				8
+	TBYE				10
+
+
+VARIABLES
+=========
+
+Syntax:
+[variable_name]		directive	initial-value	[,initial-value]...
+
+	Directive	Purpose			Storage Space
+	-----------------------------------------------------
+	DB		Define byte		allocates 1 byte
+	DW		Define word		allocates 2 bytes
+	DD		Define double word	allocates 4 bytes
+	DQ		Define quadword		allocates 8 bytes
+	DT		Define ten bytes	allocates 10 bytes
+
+
+Allocating storage space for uninitalized data
+----------------------------------------------
+
+	Directive		Purpose
+	-------------------------------
+	RESB			Reserve a byte
+	RESW			Reserve a word
+	RESD			Reserve a double word
+	RESQ			Reserve a quad word
+	REST			Reserve a ten bytes
+
+Multiples Initializations
+-------------------------
+The *times* directive allows multiple initializations to the same value. You
+can use this for initializate arrays.
+
+	my_array	times	0x09	dw	0x00
+
+	Create an array named 'my_array' with length of 9 and initialized
+	to zero.
+
+
+CONSTANTS
+=========
+
+NUMERIC CONSTANTS
+-----------------
+EQU
+	CONSTANT_NAME	equ	value
+
+%assign (like EQU)
+	%assign	CONSTANT_NAME	value
+
+NUMERIC AND STRING CONSTANTS
+----------------------------
+%define (like #define on C)
+	%define MY_STR	'Hello world!'
+	%define PTR	[EBP+4]
+
+	NOTE: %define is CASE-SENSITIVE
+
+
+ARITHMETIC INSTRUCTIONS
+=======================
+INC	Incrementing an operand by one.
+	inc	destination
+
+DEC	Decrementing an operand by one.
+	dec	destination
+
+ADD /
+SUB	unsigned addition / substraction of binary data in byte, word and
+	double word size.
+	add/sub	destination,	source
+
+MUL /
+IMUL	unsigned multiply / signed multiply. Multipling binary data. Affect
+	the Carry and Overflow flag.
+
+DIV /
+IDIV	unsigned divide / signed divide. Divide binary data. Overflow may
+	ocurr. The processor generates an interrupt if overflow occurs.
+	div/idiv	divisor
+
+	The dividend is in an accumulator.
+
+LOGICAL INSTRUCTIONS
+====================
+
+Instruction	Format					Meaning
+-------------------------------------------------------------------------------
+AND		and	operand1,	operand2	both are the same
+
+OR		or	operand1,	operand2	one or another
+
+XOR		xor	operand1,	operand2	bit to 1 if are
+							differents.
+
+TEST		test	operand1,	operand2	same as and, but
+							doesn't change
+							operand1 value.
+
+NOT		not	operand1			Reverse bits.
+
+
+Truth table
+-----------
+x	y	and(x)	or(x)	xor(x)	test(x)	not(x)
+------------------------------------------------------
+0	0	0	0	0		1
+1	0	0	1	1		0
+0	1	0	1	1
+1	1	1	1	0
+
+
+CONDITIONS
+==========
+CMP	Compares if two operands are equals or not. Used in conditional
+	execution.
+	cmp	destination,	source
+
+Unconditional jumps
+-------------------
+JMP	Provides a label name where the flow of control is transferred
+	inmediatly.
+	jmp	label
+
+Conditional jumps
+------------------
+· Signed data operations: 
+
+Instruction	Description					Flag tested
+---------------------------------------------------------------------------
+JE/JZ		Jump equal or jump zero				ZF
+JNE/JNZ		Jump not equal or jump not zero			ZF
+JG/JNLE		jump greater or jump not less/equal		OF,SF,ZF
+JGE/JNL		jump greater or jump not less			OF,SF
+JL/JNGE		jump less or jump not greater/equal		OF,SF
+JLE/JNG		jump less/equal or jump non greater		OF,SF,ZF
+
+· Unsigned data operations:
+
+Instruction	Description					Flag tested
+---------------------------------------------------------------------------
+JE/JZ		Jump equal or jump zero				ZF
+JNE/JNZ		Jump not equal or jump not zero			ZF
+JA/JNBE		jump above or jump not below/equal		CF,ZF
+JAE/JNB		jump above/equal or jump not below		CF
+JB/JNAE		jump below or jump not above/equal		CF
+JBE/JNA		jump below/equal or jump not above		AF,CF
+
+· Special uses:
+
+Instruction	Description					Flag tested
+---------------------------------------------------------------------------
+JXCZ		jump if cx is zero				none
+JC		jump if carry					CF
+JNC		jump if no carry				CF
+JO		jump if overflow				OF
+JNO		jump if not overflow				OF
+JP/JPE		jump parity or jump parity even			PF
+JNP/JPO		jump no parity or jump parity odd		PF
+JS		jump sign (negative value)			SF
+JNS		jump no sign (positive value)			SF
+
+
+STRINGS
+=======
+Ex:
+	mystr	db	'Hello world!',0x0	; 0x0 == end of string
+	len	equ	$ - mystr		; length of mystr
+
+String instructions
+-------------------
+Each string instruction may require a source operand, a destination operand or
+both. 
+
+· For 16-bit segments, the SI and DI registers are used to point to the source
+  and destination, resoectively.
+
+· For 32-bit segments, the ESI and EDI registers are used to point to the
+  source and destination, respectively.
+
+
+MOVS	Moves 1 Byte,Word or Doubleword of data from memory location to
+	another.
+
+LODS	Loads from memory. If the operand is of one byte, it is loaded into the
+	AL register, if the operand is one word, it is loaded into the AX
+	register and a doubleword is loaded into the EAX register.
+
+STOS	Stores data from register (AL, AX or EAX) to memory.
+
+CMPS	Compares two data items in memory. Data could be of a byte, size, word
+	or doubleword.
+
+SCAS	Compares the contens of a register (AL, AX or EAX) with the contents
+	of an item in memory.
+

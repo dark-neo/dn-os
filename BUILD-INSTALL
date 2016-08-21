@@ -1,0 +1,37 @@
+
+INSTALLATION
+============
+
+UNIX/LINUX
+----------
+Required packages:
+	GNU build tools (gcc, make, etc.)
+	NASM assembler
+	genisoimage
+	
+
+The build process will need root privileges because 'requish.bash' must download
+'syslinux' package under /opt directory. The ISO creation process will be on /tmp
+directory (you can delete '/tmp/'  contents for each re-build, but it is not
+necessary).
+
+So, execute as root:
+	make do-all do-iso
+	
+	to build sources and create the ISO file under /tmp directory.
+
+	You can burn the ISO onto CD/DVD disc or test it on VirtualBox/Qemu/VMware
+	virtualization software :)
+
+
+If you want see others building options, run:
+	make
+	or
+	make help (but typing make is shorter ;) )
+
+
+
+WINDOWS
+-------
+TO-DO
+

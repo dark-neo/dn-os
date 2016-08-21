@@ -1,0 +1,15 @@
+
+; systext.inc
+; dark_neo
+; 2014-08-23
+
+; Store system OS strings
+
+welc	db	0x0D, 0x0A
+	db	'Welcome to dn_OS!'
+	db	0x0A,0x0A,0x0A,0x0D,0x00
+
+prompt	db	'> ',0x00
+
+wrongcommand db	0x0D,'Wrong command.',0x0A,0x0D,0x00
+
